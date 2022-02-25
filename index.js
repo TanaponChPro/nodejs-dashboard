@@ -12,28 +12,28 @@ async function main() {
 
         let insJobImportResult = await insertJobImport(tmpFileName,tmpImpDate)
         console.log(insJobImportResult)
-        console.log("Insert JobImport complete")
+        // console.log("Insert JobImport complete")
         // insJobImportResult.then(function(res){
         //     console.log(res)
         // })
 
         let insDeviceResult = await insertDevice(tmpFileName,tmpImpDate)
         console.log(insDeviceResult)
-        console.log("Insert Device complete")
+        // console.log("Insert Device complete")
         // insDeviceResult.then(function (res) {
         //      console.log(res) 
         // })
 
         let insDevHisResult = await insertDeviceHistory(tmpFileName,tmpImpDate)
         console.log(insDevHisResult)
-        console.log("Insert DeviceHistory complete")
+        // console.log("Insert DeviceHistory complete")
         // insDevHisResult.then(function (res) { 
         //     console.log(res) 
         // })
 
         const updFileImport = await updateFileImport(tmpFileName, tmpImpDate)
         console.log(updFileImport)
-        console.log("Update FileImport complete")
+        // console.log("Update FileImport complete")
         // updFileImport.then(data => console.log(data))
         // updFileImport.then(function (res) {
         //     console.log(res)
@@ -84,15 +84,15 @@ var checkJobNo = (tmpjobno) => {
 }
 var insertJobImport = (pamFileName, pamImpDate) => {
     let = sql = ""
-    sql += " INSERT INTO `EakWServerDB`.`jobimport` ("
+    sql += " INSERT INTO `EakWServerDB`.`Jobimport` ("
     sql += "    `JobNo`,`TID`,`Bank`,`SerialNoEDC`,`TechnicName`,`RecordDateTime`,"
     sql += "    `TackDate`,`UpdateDateTime`,`JobType`,`JobStatus`,`Remark`) "
     sql += " SELECT "
     sql += "    JobNumber,TID,Bank,SerialNoEDC,TechnicName,RecordDateTime,"
-    sql += "    TackDate,NULL,substring(JobNumber,1,3) as JobType, Resultcode, Remark"
+    sql += "    TackDate,NULL,substring(JobNumber,1,3) as JobType, IFNULL(Resultcode,0) as JobStatus  , Remark"
     sql += " FROM `EakWServerDB`.`jobtacking` aa"
-    sql += " WHERE ImpFileName = '" + pamFileName + "' AND DATE_FORMAT(RecordDateTime,'%Y-%m-%d') = '" + pamImpDate + "'"
-    // sql += " WHERE JobNumber = '" + tmpjobno + "'"
+    sql += " WHERE ImpFileName LIKE '" + pamFileName + "%' AND DATE_FORMAT(RecordDateTime,'%Y-%m-%d') = '" + pamImpDate + "'"
+    sql += "   AND substring(SheetName,1,1) IN ('1','3')"
     sql += " ON DUPLICATE KEY UPDATE `JobNo` = `aa`.`JobNumber`, `TID`= `aa`.`TID`,"
     sql += "  `Bank` = aa.Bank,`SerialNoEDC` = aa.SerialNoEDC ,  `TechnicName` = aa.TechnicName,"
     sql += "  `RecordDateTime` = aa.RecordDateTime,    `TackDate`= aa.TackDate,  `UpdateDateTime`= aa.RecordDateTime,"
