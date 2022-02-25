@@ -1,0 +1,1 @@
+const connDB = require('./db.config');
